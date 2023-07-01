@@ -1,0 +1,327 @@
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: "Vehicle Store API"
+  description: "API documentation for the Vehicle Store"
+
+servers:
+  - url: "http://localhost:3000/api/v1"
+
+paths:
+  /vehicle:
+    post:
+      summary: "Adds a new vehicle to the system"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehicle"
+      responses:
+        '201':
+          description: "Vehicle successfully added"
+        '400':
+          description: "Bad Request"
+
+  /vehicle/{vehicleId}:
+    put:
+      summary: "Updates the details of a specific vehicle"
+      parameters:
+        - in: path
+          name: vehicleId
+          schema:
+            type: string
+          required: true
+          description: The id of the vehicle to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehicle"
+      responses:
+        '200':
+          description: "Vehicle successfully updated"
+        '404':
+          description: "Vehicle not found"
+        '400':
+          description: "Bad Request"
+    get:
+      summary: "Fetches the details of a specific vehicle"
+      parameters:
+        - in: path
+          name: vehicleId
+          schema:
+            type: string
+          required: true
+          description: The id of the vehicle to retrieve
+      responses:
+        '200':
+          description: "Successful operation"
+        '404':
+          description: "Vehicle not found"
+    delete:
+      summary: "Removes a specific vehicle from the system"
+      parameters:
+        - in: path
+          name: vehicleId
+          schema:
+            type: string
+          required: true
+          description: The id of the vehicle to delete
+      responses:
+        '204':
+          description: "Vehicle successfully deleted"
+        '404':
+          description: "Vehicle not found"
+
+  /vehicle/findByStatus:
+    get:
+      summary: "Finds vehicles by their status"
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+          required: true
+          description: The status of the vehicles to retrieve
+      responses:
+        '200':
+          description: "Successful operation"
+        '404':
+          description: "Vehicle not found"
+
+  /vehicle/findByTags:
+    get:
+      summary: "Finds vehicles based on assigned tags"
+      parameters:
+        - in: query
+          name: tags
+          schema:
+            type: array
+            items:
+              type: string
+          required: true
+          description: The tags of the vehicles to retrieve
+      responses:
+        '200':
+          description: "Successful operation"
+        '404':
+          description: "Vehicle not found"
+
+  /store/inventory:
+    get:
+      summary: "Fetches all vehicles from the inventory"
+      responses:
+        '200':
+          description: "Successful operation"
+        '404':
+          description: "Inventory not found"
+
+  /store/order:
+    post:
+      summary: "Places an order for a vehicle"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+      responses:
+        '201':
+          description: "Order successfully placed"
+        '400':
+          description: "Bad Request"
+
+  /store/order/{orderId}:
+    get:
+      summary: "Fetches details of a specific order"
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+          required: true
+          description: The id of the order to retrieve
+      responses:
+        '200':
+          description: "Successful operation"
+        '404':
+          description: "Order not found"
+    delete:
+      summary: "Cancels a specific order"
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+          required: true
+          description: The id of the order to cancel
+      responses:
+        '204':
+          description: "Order successfully cancelled"
+        '404':
+          description: "Order not found"
+
+  /user:
+    post:
+      summary: "Registers a new user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        '201':
+          description: "User successfully registered"
+        '400':
+          description: "Bad Request"
+
+  /user/createWithArray:
+    post:
+      summary: "Creates multiple users with an array input"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
+      responses:
+        '201':
+          description: "Users successfully registered"
+        '400':
+          description: "Bad Request"
+
+  /user/createWithList:
+    post:
+      summary: "Creates multiple users with a list input"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
+      responses:
+        '201':
+          description: "Users successfully registered"
+        '400':
+          description: "Bad Request"
+
+  /user/login:
+    get:
+      summary: "Logs in a user"
+      responses:
+        '200':
+          description: "Successful operation"
+        '401':
+          description: "Unauthorized"
+
+  /user/logout:
+    get:
+      summary: "Logs out a user"
+      responses:
+        '200':
+          description: "Successful operation"
+        '401':
+          description: "Unauthorized"
+
+  /user/{username}:
+    get:
+      summary: "Fetches the profile of a specific user"
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user to retrieve
+      responses:
+        '200':
+          description: "Successful operation"
+        '404':
+          description: "User not found"
+    put:
+      summary: "Updates the profile of a specific user"
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        '200':
+          description: "User successfully updated"
+        '404':
+          description: "User not found"
+        '400':
+          description: "Bad Request"
+    delete:
+      summary: "Deletes a specific user"
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user to delete
+      responses:
+        '204':
+          description: "User successfully deleted"
+        '404':
+          description: "User not found"
+
+components:
+  schemas:
+    Vehicle:
+      type: object
+      required:
+        - id
+        - name
+        - make
+        - year
+        - color
+        - stock
+        - price
+      properties:
+        id:
+          type: string
+          description: The auto-generated id of the vehicle
+        name:
+          type: string
+          description: The name of the vehicle
+        make:
+          type: string
+          description: The make of the vehicle
+        year:
+          type: integer
+          format: int32
+          description: The manufacturing year of the vehicle
+        color:
+          type: string
+          description: The color of the vehicle
+        stock:
+          type: integer
+          format: int32
+          description: The stock amount of the vehicle
+        price:
+          type: number
+          format: double
+          description: The price of the vehicle
+    Order:
+      type: object
+      # Define the Order schema here
+    User:
+      type: object
+      # Define the User schema here
