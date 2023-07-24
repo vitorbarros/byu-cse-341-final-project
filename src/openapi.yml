@@ -5,7 +5,7 @@ info:
   description: "API documentation for the Vehicle Store"
 
 servers:
-  - url: "http://localhost:3000/api/v1"
+  - url: "http://localhost:3001/api/v1"
 
 paths:
   /vehicle:
@@ -22,6 +22,20 @@ paths:
           description: "Vehicle successfully added"
         '400':
           description: "Bad Request"
+    get:
+      summary: "Finds all vehicles, it is possible to filter by status"
+      parameters:
+        - in: query
+          name: sold
+          schema:
+            type: string
+          required: false
+          description: The status of the vehicles to retrieve
+      responses:
+        '200':
+          description: "Successful operation"
+        '404':
+          description: "Vehicle not found"
 
   /vehicle/{vehicleId}:
     put:
@@ -75,49 +89,6 @@ paths:
         '404':
           description: "Vehicle not found"
 
-  /vehicle/findByStatus:
-    get:
-      summary: "Finds vehicles by their status"
-      parameters:
-        - in: query
-          name: status
-          schema:
-            type: string
-          required: true
-          description: The status of the vehicles to retrieve
-      responses:
-        '200':
-          description: "Successful operation"
-        '404':
-          description: "Vehicle not found"
-
-  /vehicle/findByTags:
-    get:
-      summary: "Finds vehicles based on assigned tags"
-      parameters:
-        - in: query
-          name: tags
-          schema:
-            type: array
-            items:
-              type: string
-          required: true
-          description: The tags of the vehicles to retrieve
-      responses:
-        '200':
-          description: "Successful operation"
-        '404':
-          description: "Vehicle not found"
-
-  /store/inventory:
-    get:
-      summary: "Fetches all vehicles from the inventory"
-      responses:
-        '200':
-          description: "Successful operation"
-        '404':
-          description: "Inventory not found"
-
   /store/order:
     post:
       summary: "Places an order for a vehicle"
@@ -148,89 +119,8 @@ paths:
           description: "Successful operation"
         '404':
           description: "Order not found"
-    delete:
-      summary: "Cancels a specific order"
-      parameters:
-        - in: path
-          name: orderId
-          schema:
-            type: string
-          required: true
-          description: The id of the order to cancel
-      responses:
-        '204':
-          description: "Order successfully cancelled"
-        '404':
-          description: "Order not found"
 
-  /user:
-    post:
-      summary: "Registers a new user"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        '201':
-          description: "User successfully registered"
-        '400':
-          description: "Bad Request"
-
-  /user/createWithArray:
-    post:
-      summary: "Creates multiple users with an array input"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/User"
-      responses:
-        '201':
-          description: "Users successfully registered"
-        '400':
-          description: "Bad Request"
-
-  /user/createWithList:
-    post:
-      summary: "Creates multiple users with a list input"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/User"
-      responses:
-        '201':
-          description: "Users successfully registered"
-        '400':
-          description: "Bad Request"
-
-  /user/login:
-    get:
-      summary: "Logs in a user"
-      responses:
-        '200':
-          description: "Successful operation"
-        '401':
-          description: "Unauthorized"
-
-  /user/logout:
-    get:
-      summary: "Logs out a user"
-      responses:
-        '200':
-          description: "Successful operation"
-        '401':
-          description: "Unauthorized"
-
-  /user/{username}:
+  /user/{googleId}:
     get:
       summary: "Fetches the profile of a specific user"
       parameters:
@@ -287,17 +177,17 @@ components:
     Vehicle:
       type: object
       required:
-        - id
         - name
         - make
         - year
         - color
         - stock
         - price
+        - sold
+        - description
+        - category
+        - buyer
       properties:
-        id:
-          type: string
-          description: The auto-generated id of the vehicle
         name:
           type: string
           description: The name of the vehicle
@@ -319,9 +209,51 @@ components:
           type: number
           format: double
           description: The price of the vehicle
+        sold:
+          type: boolean
+          description: The status of the sold
+        description:
+          type: string
+          description: The description of the vehicle
+        category:
+          type: string
+          description: The category of the vehicle
+        buyer:
+          type: string
+          description: The buyer of the vehicle
     Order:
       type: object
-      # Define the Order schema here
+      required:
+        - vehicleId
+        - userId
+        - sellPrice
+        - taxRate
+        - totalAmount
+        - createdAt
+      properties:
+        vehicleId:
+          type: string
+          description: The id of the vehicle
+        userId:
+          type: string
+          description: The id of the user
+        sellPrice:
+          type: number
+          format: double
+          description: The sell price of the vehicle
+        taxRate:
+          type: number
+          format: double
+          description: The tax rate in decimal
+        totalAmount:
+          type: number
+          format: double
+          description: The total of the order (sellPrice + taxRate)
+        createdAt:
+          type: string
+          format: date
+          readOnly: true
+          description: The datetime of the order creation
     User:
       type: object
       # Define the User schema here
